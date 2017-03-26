@@ -16,23 +16,24 @@ import com.scitools.understand.Understand;
 import com.scitools.understand.UnderstandException;
 
 public class Apitest {
-	public static String projPath = "/Users/lahiru/Development/workspace/SciToolPOC/project.udb";
+	public static String projPath = "/Users/lahiru/Development/workspace/SciToolPOC";
+	public static String udbProjectName = "/und_project.udb";
 
 	public static void main(String[] args) {
 		System.out.println("Download the master git repo locally.");
 		int repoId = downloadRepo("https://codeload.github.com/lahiruk/exam-conductor/zip/master");
 		System.out.println("Extract the master git repo zip.");
-		String repoName = extractRepo(repoId);
+		extractRepo(repoId);
 		System.out.println("Prepare the udb file.");
-		buildUdb(repoName);
+		buildUdb("exam-conductor-master");
 		System.out.println("###############");
-		lineAndColomNumbersMethodsVariables();
+		lineAndColomNumbersMethodsVariables("exam-conductor-master");
 		System.out.println("***************");
-		unusedPrivateFunctions();
+		unusedPrivateFunctions("exam-conductor-master");
 		System.out.println("@@@@@@@@@@@@@@@");
-		unusedPrivateVariables();
+		unusedPrivateVariables("exam-conductor-master");
 		System.out.println("&&&&&&&&&&&&&&&");
-		unusedParameters();
+		unusedParameters("exam-conductor-master");
 	}
 
 	private static int downloadRepo(String spec) {
@@ -42,7 +43,7 @@ public class Apitest {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
 			InputStream in = connection.getInputStream();
-			FileOutputStream out = new FileOutputStream("../"+repoId+"_download.zip");
+			FileOutputStream out = new FileOutputStream("../" + repoId + "_download.zip");
 			copy(in, out, 1024);
 			out.close();
 
@@ -63,37 +64,39 @@ public class Apitest {
 		output.flush();
 	}
 
-	private static String extractRepo(int repoId){
+	private static void extractRepo(int repoId) {
 		UnzipUtility unzipUtility = new UnzipUtility();
 		String repoName = null;
 		try {
-			repoName = unzipUtility.unzip("../"+repoId+"_download.zip", "../");
+			unzipUtility.unzip("../" + repoId + "_download.zip", "../");
 		} catch (IOException e) {
 			System.out.println("Failed extract zip file:" + e.getMessage());
 			System.exit(0);
 		}
-		
-		return repoName;
+
 	}
 
 	private static void buildUdb(String repoName) {
-		String relativeFilePath = "../" + File.separator + repoName;
-		String absPath = new File(relativeFilePath).getPath();
-		String cmd = "und -db "+absPath+"/und_project.udb create -languages Java "
-				+ "add "+absPath+"/src settings -javaVersion Java8 analyze";
+		String absPath = projPath + File.separator + repoName;
+		String cmd = "und -db " + absPath + udbProjectName + " create -languages Java " + "add " + absPath
+				+ "/src settings -javaVersion Java8 analyze";
 		System.out.println(cmd);
 		try {
 			Process p = Runtime.getRuntime().exec(cmd);
-		} catch (IOException e) {
+			System.out.println("Waiting for udb build ...");
+			p.waitFor();
+			System.out.println("Udb file done.");
+		} catch (IOException | InterruptedException e) {
 			System.out.println("Failed execute udb command:" + e.getMessage());
 			System.exit(0);
 		}
 	}
-	
-	private static void lineAndColomNumbersMethodsVariables() {
+
+	private static void lineAndColomNumbersMethodsVariables(String repoName) {
 		try {
 			// Open the Understand Database
-			Database db = Understand.open(projPath);
+			Database db = Understand.open(projPath + File.separator + repoName + udbProjectName);
+			System.out.println("Project file :" + projPath + File.separator + repoName + udbProjectName);
 			// Get a list of all functions and methods
 			Entity[] clazz = db.ents("class ~unknown ~unresolved");
 			for (Entity e : clazz) {
@@ -126,10 +129,10 @@ public class Apitest {
 		}
 	}
 
-	private static void unusedPrivateFunctions() {
+	private static void unusedPrivateFunctions(String repoName) {
 		try {
 			// Open the Understand Database
-			Database db = Understand.open(projPath);
+			Database db = Understand.open(projPath + File.separator + repoName + udbProjectName);
 			// Get a list of all functions and methods
 			Entity[] funcs = db.ents("function private ~unknown ~unresolved,method private ~unknown ~unresolved");
 			for (Entity e : funcs) {
@@ -148,10 +151,10 @@ public class Apitest {
 		}
 	}
 
-	private static void unusedPrivateVariables() {
+	private static void unusedPrivateVariables(String repoName) {
 		try {
 			// Open the Understand Database
-			Database db = Understand.open(projPath);
+			Database db = Understand.open(projPath + File.separator + repoName + udbProjectName);
 			// Get a list of all variables
 			Entity[] vars = db.ents("variable ~unknown");
 
@@ -171,10 +174,10 @@ public class Apitest {
 		}
 	}
 
-	private static void unusedParameters() {
+	private static void unusedParameters(String repoName) {
 		try {
 			// Open the Understand Database
-			Database db = Understand.open(projPath);
+			Database db = Understand.open(projPath + File.separator + repoName + udbProjectName);
 			// Get a list of all functions and methods
 			Entity[] funcs = db.ents("function ~unknown ~unresolved,method ~unknown ~unresolved");
 

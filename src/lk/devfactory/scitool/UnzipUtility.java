@@ -27,18 +27,16 @@ public class UnzipUtility {
      * @return extracted repo name
      * @throws IOException
      */
-    public String unzip(String zipFilePath, String destDirectory) throws IOException {
+    public void unzip(String zipFilePath, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
             destDir.mkdir();
         }
-        String fileName = null;
         ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
         ZipEntry entry = zipIn.getNextEntry();
         // iterates over entries in the zip file
         while (entry != null) {
             String filePath = destDirectory + File.separator + entry.getName();
-            fileName = entry.getName();
             if (!entry.isDirectory()) {
                 // if the entry is a file, extracts it
                 extractFile(zipIn, filePath);
@@ -51,7 +49,6 @@ public class UnzipUtility {
             entry = zipIn.getNextEntry();
         }
         zipIn.close();
-        return fileName;
     }
     /**
      * Extracts a zip entry (file entry)
