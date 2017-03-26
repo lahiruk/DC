@@ -1,6 +1,8 @@
-und -db /Users/lahiru/Development/workspace/exam-conductor/project.udb create -languages Java add /Users/lahiru/Development/workspace/exam-conductor/src/ settings -ReportGenerateTextReport on -reportGenerateHTMLReport off -ReportReports "Unused Objects and Functions" "Unused Types" "Unused Program Units" analyze report 
+und -db /Users/lahiru/Development/workspace/exam-conductor/project.udb create -languages Java add /Users/lahiru/Development/workspace/exam-conductor/src/ settings -javaVersion Java8 analyze
 
-und -db /Users/lahiru/Development/workspace/exam-conductor/project.udb create -languages Java add /Users/lahiru/Development/workspace/exam-conductor/src/ settings -javaVersion Java8 -metrics all analyze
+#Other useful commands to run reports and matrixes
+
+und -db /Users/lahiru/Development/workspace/exam-conductor/project.udb create -languages Java add /Users/lahiru/Development/workspace/exam-conductor/src/ settings -ReportGenerateTextReport on -reportGenerateHTMLReport off -ReportReports "Unused Objects and Functions" "Unused Types" "Unused Program Units" analyze report 
 
 und -db /Users/lahiru/Development/workspace/journal-publisher/LahiruKarunatilake_CA_Java_Journals1/Code/project.udb create -languages Java add /Users/lahiru/Development/workspace/journal-publisher/LahiruKarunatilake_CA_Java_Journals1/Code/src settings -ReportGenerateTextReport on -reportGenerateHTMLReport off -ReportReports "Unused Objects and Functions" analyze report
 
