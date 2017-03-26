@@ -27,6 +27,7 @@ public class Apitest {
 			for (Entity e : funcs) {
 				System.out.println(e.name()+" : "+e.kind());
 				
+				// Get a list of all functions and methods has invocations
 				Reference[] callRefs = e.refs("call",null,true);
 				for (Reference pRef : callRefs) {
 					System.out.println(e.name() + " => " + pRef.ent().name() +" ["+pRef.line()+":"+pRef.column()+"]");
@@ -37,7 +38,7 @@ public class Apitest {
 			System.exit(0);
 		}
 	}
-	
+	 
 	private static void unusedPrivateVariables() {
 		try {
 			// Open the Understand Database
@@ -48,6 +49,7 @@ public class Apitest {
 			for (Entity e : vars) {
 				System.out.println(e.name()+" : "+e.kind());
 				
+				// Get a list of all used variables
 				Reference[] useByRefs = e.refs("Useby",null,true);
 				for (Reference pRef : useByRefs) {
 					System.out.println(e.name() + " => " + pRef.ent().name() +" ["+pRef.line()+":"+pRef.column()+"]");
@@ -69,10 +71,13 @@ public class Apitest {
 			for (Entity e : funcs) {
 				System.out.println(e.name()+" : "+e.kind());
 				
+				// Get a list of all params of functions and methods
 				Reference[] paramterRefs = e.refs("define", "parameter", true);
 				for (Reference pRef : paramterRefs) {
 					e = pRef.ent();
 					System.out.println(e.name() + " => " + pRef.ent().name() +" ["+pRef.line()+":"+pRef.column()+"]");
+					
+					// Get a list of all used params
 					Reference[] useByRefs = e.refs("Useby",null,true);
 					for (Reference uRef : useByRefs) {
 						System.out.println(e.name() + " =>* " + uRef.ent().name() +" ["+uRef.line()+":"+uRef.column()+"]");
